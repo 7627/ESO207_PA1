@@ -34,6 +34,15 @@ void print_list(struct node* head){
   // printf("\n");
 }
 
+// int lessThan(struct node*number1,struct node* number2){
+//   if(number2==NULL){
+//     return 0;
+//   }
+//   if(number1==NULL){
+//     return 1;
+//   }
+// }
+
 struct node* add(struct node* number1,struct node* number2){
   struct node* result, *head=NULL;
   int carry=0,i=0;
@@ -133,7 +142,7 @@ struct node* subtract(struct node* number1, struct node* number2){
       carry=0;
     }
     else{
-      result->digit=(number1->digit - number2->digit - carry+10);
+      result->digit=(number1->digit - number2->digit - carry + 10);
       carry=1;
     }
     number1=number1->next;
@@ -142,12 +151,46 @@ struct node* subtract(struct node* number1, struct node* number2){
   while(number1!=NULL){
     result->next=calloc(1,sizeof(struct node));
     result=result->next;
-    result->digit=(number1->digit - carry);
+    if(number1->digit - carry >= 0 ){
+      result->digit=(number1->digit - carry);
+      carry=0;
+    }
+    else{
+      result->digit=(number1->digit - carry + 10);
+      carry=1;
+    }
     number1=number1->next;
+  }
+  if(number2!=NULL){
+    struct node* temp1=calloc(1,sizeof(struct node));
+    temp1->digit=-1;
+    // printf("Not valid\n");
+    return temp1;
+  }
+  if(result->digit==-1 | ((number1==NULL & number2==NULL) & carry==1)){
+    struct node* temp1=calloc(1,sizeof(struct node));
+    temp1->digit=-1;
+    // printf("Not valid\n");
+    return temp1;
   }
   return temp;
 }
- int main(){
+
+struct node* divide(struct node* number1,struct node* number2){
+  struct node* result, *temp=number1;
+  result=calloc(1,sizeof(struct node));
+  result->digit=-1;//initialised result to zero;
+  struct node* add_one=calloc(1,sizeof(struct node));
+  add_one->digit=1;//add_one is used to add one to any number;
+  while(temp->digit!=-1){
+    temp=subtract(temp,number2);
+    result=add(result,add_one);
+    // print_list(temp);printf("\n");
+  }
+  return result;
+}
+
+int main(){
    int n1,n2,x;
    scanf("%d %d",&n1,&n2); //n1 and n2 are the number of digits in number1 and number2 resp.
    struct node* number1,*number2;
@@ -168,6 +211,8 @@ struct node* subtract(struct node* number1, struct node* number2){
    printf("Multiplication of numbers= ");print_list(multiplication);printf("\n");
    struct node* subtraction=subtract(number1,number2);
    printf("Subtraction of numbers= ");print_list(subtraction);printf("\n");
+   struct node* division=divide(number1,number2);
+   printf("Division of numbers= ");print_list(division);printf("\n");
    // printf("done");
    return 0;
  }
